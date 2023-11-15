@@ -16,6 +16,7 @@ function find() {
     'species',
     'water_freq',
     'light_conditions',
+    'leaf_type',
     'user_id'
   );
 }

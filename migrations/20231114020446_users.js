@@ -14,6 +14,7 @@ export const up = async function (knex) {
     plants.string('species', 128).notNullable();
     plants.string('water_freq', 128).notNullable();
     plants.string('light_conditions', 128).notNullable();
+    plants.string('leaf_type', 128);
     plants
       .integer('user_id')
       .notNullable()
