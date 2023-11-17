@@ -42,7 +42,11 @@ function update(id, changes) {
 }
 
 function remove(id) {
-  return db('users').where(id).del();
+  return db('users').where({ id }).del(); // ensure to pass an object { id } for consistency
 }
+
+// function remove(id) {
+//   return db('users').where(id).del();
+// }
 
 export default Users;

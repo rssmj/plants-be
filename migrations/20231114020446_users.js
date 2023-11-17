@@ -5,7 +5,7 @@ export const up = async function (knex) {
     users.string('last_name');
     users.string('username', 128).notNullable().unique();
     users.string('password', 128).notNullable();
-    users.integer('phone', 15).notNullable();
+    users.string('phone', 15).notNullable();
   });
 
   await knex.schema.createTable('plants', (plants) => {

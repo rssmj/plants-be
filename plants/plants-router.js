@@ -31,28 +31,56 @@ router.get('/:id', (req, res) => {
   const { id } = req.params;
   Plants.findById(id)
     .then((plant) => {
-      res.status(200).json(plant);
-      res.status(404).json({
-        message: `Could not find plant with ID: ${id}.`,
-      });
+      return plant
+        ? res.status(200).json(plant)
+        : res
+            .status(404)
+            .json({ message: `Could not find plant with ID: ${id}.` });
     })
     .catch(() => {
-      res.status(500).json({
-        message: 'Failed to get plant.',
-      });
+      res.status(500).json({ message: 'Failed to get plant.' });
     });
 });
 
-router.post('/', (req, res) => {
-  const { id } = req.params;
+// router.get('/:id', (req, res) => {
+//   const { id } = req.params;
+//   Plants.findById(id)
+//     .then((plant) => {
+//       res.status(200).json(plant);
+//       res.status(404).json({
+//         message: `Could not find plant with ID: ${id}.`,
+//       });
+//     })
+//     .catch(() => {
+//       res.status(500).json({
+//         message: 'Failed to get plant.',
+//       });
+//     });
+// });
+
+// router.post('/', (req, res) => {
+//   const { id } = req.params;
+//   const newPlant = req.body;
+//   Plants.add(newPlant, id)
+//     .then((plant) => {
+//       res.status(201).json({ created: plant });
+//     })
+//     .catch((err) => {
+//       res.status(500).json({ message: err.message });
+//     });
+// });
+
+router.post('/:userId', async (req, res) => {
+  const { userId } = req.params; // Extract the user ID from the URL
   const newPlant = req.body;
-  Plants.add(newPlant, id)
-    .then((plant) => {
-      res.status(201).json({ created: plant });
-    })
-    .catch((err) => {
-      res.status(500).json({ message: err.message });
-    });
+
+  try {
+    const addedPlant = await Plants.addPlantToUser(newPlant, userId);
+    res.status(201).json({ created: addedPlant });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err.message });
+  }
 });
 
 router.put('/:id', (req, res) => {
