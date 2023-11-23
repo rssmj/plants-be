@@ -49,15 +49,36 @@ router.get('/:id', (req, res) => {
 router.post('/:userId', async (req, res) => {
   const { userId } = req.params; // Extract the user ID from the URL
   const newPlant = req.body;
-
   try {
     const addedPlant = await Plants.addPlantToUser(newPlant, userId);
-    res.status(201).json({ created: addedPlant });
+    if (addedPlant) {
+      res
+        .status(201)
+        .json({ message: 'Plant added to user', plant: addedPlant });
+    } else {
+      res
+        .status(404)
+        .json({ message: 'User not found or plant could not be added' });
+    }
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    res
+      .status(500)
+      .json({ message: 'Failed to add plant to user', error: err.message });
   }
 });
+
+// router.post('/:userId', async (req, res) => {
+//   const { userId } = req.params; // Extract the user ID from the URL
+//   const newPlant = req.body;
+//   try {
+//     const addedPlant = await Plants.addPlantToUser(newPlant, userId);
+//     res.status(201).json({ created: addedPlant });
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).json({ message: err.message });
+//   }
+// });
 
 // Update information about a specific plant by its ID
 router.put('/:id', (req, res) => {

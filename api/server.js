@@ -13,9 +13,9 @@ import authRouter from '../auth/auth-router.js';
 export const server = express();
 
 // Applying middleware to enhance server security and functionality
+server.use(express.json()); // Parsing incoming request bodies in JSON format.
 server.use(helmet()); // Helmet helps secure the Express app by setting various HTTP headers.
 server.use(cors()); // Cors enables Cross-Origin Resource Sharing for the server.
-server.use(express.json()); // Parsing incoming request bodies in JSON format.
 
 // Handling the root endpoint '/'
 server.get('/', (req, res) => {
