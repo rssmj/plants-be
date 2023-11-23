@@ -1,10 +1,13 @@
+// Importing necessary modules
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import Users from '../users/users-model.js';
-import { jwtSecret } from '../api/secrets.js';
+import Users from '../users/users-model.js'; // Presumably interacts with the database for user-related operations
+import { jwtSecret } from '../api/secrets.js'; // Secret key for JWT token signing
 
 const router = Router();
+
+// Route for user registration
 router.post('/register', (req, res) => {
   let user = req.body;
   const rounds = process.env.HASH_ROUNDS || 8;
@@ -13,7 +16,7 @@ router.post('/register', (req, res) => {
   user.password = hash;
   Users.add(user)
     .then((user) => {
-      res.status(201).json(user);
+      res.status(201).json(user); // Return the created user in JSON format
     })
     .catch((error) => {
       console.log(error);
@@ -23,6 +26,7 @@ router.post('/register', (req, res) => {
     });
 });
 
+// Route for user login
 router.post('/login', (req, res) => {
   let { username, password } = req.body;
   Users.findBy({
@@ -44,11 +48,12 @@ router.post('/login', (req, res) => {
     .catch((err) => {
       console.log(err);
       res.status(500).json({
-        errorMessage: 'There was an error loggin in!',
+        errorMessage: 'There was an error logging in!',
       });
     });
 });
 
+// Function to generate a JWT token
 function generateToken(user) {
   const payload = {
     subject: user.id,

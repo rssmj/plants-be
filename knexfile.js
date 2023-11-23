@@ -1,3 +1,4 @@
+// Configuration for the 'development' environment
 export const development = {
   client: 'sqlite3',
   useNullAsDefault: true,
@@ -17,6 +18,7 @@ export const development = {
   },
 };
 
+// Configuration for the 'staging' environment
 export const staging = {
   client: 'postgresql',
   connection: {
@@ -33,6 +35,7 @@ export const staging = {
   },
 };
 
+// Configuration for the 'production' environment
 export const production = {
   production: {
     client: 'postgresql',

@@ -3,6 +3,7 @@ import { Plants } from './plants-model.js';
 
 const router = Router();
 
+// Retrieve all plants
 router.get('/', (req, res) => {
   Plants.find()
     .then((plants) => {
@@ -15,6 +16,7 @@ router.get('/', (req, res) => {
     });
 });
 
+// Retrieve plants belonging to a specific user
 router.get('/user/:id', (req, res) => {
   const { id } = req.params;
   Plants.findByUser(id)
@@ -27,6 +29,7 @@ router.get('/user/:id', (req, res) => {
     });
 });
 
+// Retrieve a specific plant by its ID
 router.get('/:id', (req, res) => {
   const { id } = req.params;
   Plants.findById(id)
@@ -41,6 +44,63 @@ router.get('/:id', (req, res) => {
       res.status(500).json({ message: 'Failed to get plant.' });
     });
 });
+
+// Add a new plant associated with a specific user
+router.post('/:userId', async (req, res) => {
+  const { userId } = req.params; // Extract the user ID from the URL
+  const newPlant = req.body;
+
+  try {
+    const addedPlant = await Plants.addPlantToUser(newPlant, userId);
+    res.status(201).json({ created: addedPlant });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Update information about a specific plant by its ID
+router.put('/:id', (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+  Plants.findById(id)
+    .then((plant) => {
+      plant
+        ? Plants.update(id, changes).then((updated) => {
+            res.status(200).json({
+              message: `Successfully updated plant ID: ${id}`,
+            });
+          })
+        : res.status(404).json({
+            errorMessage: 'Plant not found',
+          });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        errorMessage: err.message,
+      });
+    });
+});
+
+// Delete a plant by its ID
+router.delete('/:id', (req, res) => {
+  const { id } = req.params;
+  Plants.remove({ id })
+    .then((deleted) => {
+      res
+        .status(200)
+        .json({ message: `Plant ID: ${id} has been removed`, deleted });
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ errorMessage: `Cannot remove plant by ID: ${id}` });
+    });
+});
+
+export default router;
 
 // router.get('/:id', (req, res) => {
 //   const { id } = req.params;
@@ -69,57 +129,3 @@ router.get('/:id', (req, res) => {
 //       res.status(500).json({ message: err.message });
 //     });
 // });
-
-router.post('/:userId', async (req, res) => {
-  const { userId } = req.params; // Extract the user ID from the URL
-  const newPlant = req.body;
-
-  try {
-    const addedPlant = await Plants.addPlantToUser(newPlant, userId);
-    res.status(201).json({ created: addedPlant });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: err.message });
-  }
-});
-
-router.put('/:id', (req, res) => {
-  const { id } = req.params;
-  const changes = req.body;
-  Plants.findById(id)
-    .then((plant) => {
-      plant
-        ? Plants.update(id, changes).then((updated) => {
-            res.status(200).json({
-              message: `successfully updated plant ID: ${id}`,
-            });
-          })
-        : res.status(404).json({
-            errorMessage: 'plant not found',
-          });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({
-        errorMessage: error.message,
-      });
-    });
-});
-
-router.delete('/:id', (req, res) => {
-  const { id } = req.params;
-  Plants.remove({ id })
-    .then((deleted) => {
-      res
-        .status(200)
-        .json({ message: `plant ID: ${id} has been removed`, deleted });
-    })
-    .catch((err) => {
-      console.log(err);
-      res
-        .status(500)
-        .json({ errorMessage: `cannot remove plant by ID: ${id}` });
-    });
-});
-
-export default router;
