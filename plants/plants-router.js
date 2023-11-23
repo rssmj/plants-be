@@ -52,9 +52,14 @@ router.post('/:userId', async (req, res) => {
   try {
     const addedPlant = await Plants.addPlantToUser(newPlant, userId);
     if (addedPlant) {
-      res
-        .status(201)
-        .json({ message: 'Plant added to user', plant: addedPlant });
+      // Assuming addedPlant has a property 'user_id' representing the associated user ID
+      res.status(201).json({
+        message: 'Plant added to user',
+        plant: {
+          ...addedPlant,
+          user_id: userId, // Include the associated user ID in the response
+        },
+      });
     } else {
       res
         .status(404)
@@ -67,6 +72,28 @@ router.post('/:userId', async (req, res) => {
       .json({ message: 'Failed to add plant to user', error: err.message });
   }
 });
+
+// router.post('/:userId', async (req, res) => {
+//   const { userId } = req.params; // Extract the user ID from the URL
+//   const newPlant = req.body;
+//   try {
+//     const addedPlant = await Plants.addPlantToUser(newPlant, userId);
+//     if (addedPlant) {
+//       res
+//         .status(201)
+//         .json({ message: 'Plant added to user', plant: addedPlant });
+//     } else {
+//       res
+//         .status(404)
+//         .json({ message: 'User not found or plant could not be added' });
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     res
+//       .status(500)
+//       .json({ message: 'Failed to add plant to user', error: err.message });
+//   }
+// });
 
 // router.post('/:userId', async (req, res) => {
 //   const { userId } = req.params; // Extract the user ID from the URL
