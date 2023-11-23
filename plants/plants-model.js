@@ -61,8 +61,24 @@ function update(id, changes) {
 
 // Remove/delete a plant from the table using its ID
 function remove(id) {
-  return db('plants').where(id).del();
+  return db('plants')
+    .where(id)
+    .del()
+    .then((rowsDeleted) => {
+      if (rowsDeleted === 0) {
+        throw new Error(`No plant found for deletion with ID: ${id}`);
+      }
+      return rowsDeleted;
+    })
+    .catch((error) => {
+      console.error('Error while deleting plant:', error);
+      throw new Error(`Cannot remove plant by ID: ${id}`);
+    });
 }
+
+// function remove(id) {
+//   return db('plants').where(id).del();
+// }
 
 // async function add(plant) {
 //   const [id] = await db('plants').insert(plant);

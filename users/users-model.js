@@ -49,10 +49,26 @@ function update(id, changes) {
 
 // Remove a user from the 'users' table by their ID
 function remove(id) {
-  return db('users').where({ id }).del(); // Ensure to pass an object { id } for consistency
+  return db('users')
+    .where({ id }) // Ensure the ID is properly used as an object key
+    .del()
+    .then((rowsDeleted) => {
+      if (rowsDeleted === 0) {
+        throw new Error(`No user found for deletion with ID: ${id}`);
+      }
+      return rowsDeleted;
+    })
+    .catch((error) => {
+      console.error('Error while deleting user:', error);
+      throw new Error(`Cannot remove user by ID: ${id}`);
+    });
 }
 
 export default Users; // Export the Users object containing all user-related database operations
+
+// function remove(id) {
+//   return db('users').where({ id }).del(); // Ensure to pass an object { id } for consistency
+// }
 
 // function remove(id) {
 //   return db('users').where(id).del();

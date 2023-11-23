@@ -57,14 +57,30 @@ router.put('/:id', Auth, (req, res) => {
 // Delete user by ID route (with authentication middleware)
 router.delete('/:id', Auth, (req, res) => {
   const { id } = req.params;
-  Users.remove({ id })
+  Users.remove(id) // Pass id directly as a primitive value
     .then((deleted) => {
-      res.status(200).json({ message: 'user deleted', deleted }); // Responding with success message and deleted user data
+      if (deleted > 0) {
+        res.status(200).json({ message: `User ID: ${id} has been removed` });
+      } else {
+        res.status(404).json({ message: `No user found with ID: ${id}` });
+      }
     })
     .catch((err) => {
-      console.log(err);
+      console.error('Error while deleting user:', err);
       res.status(500).json({ message: err.message }); // Handling errors
     });
 });
+
+// router.delete('/:id', Auth, (req, res) => {
+//   const { id } = req.params;
+//   Users.remove({ id })
+//     .then((deleted) => {
+//       res.status(200).json({ message: 'user deleted', deleted }); // Responding with success message and deleted user data
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//       res.status(500).json({ message: err.message }); // Handling errors
+//     });
+// });
 
 export default router;
