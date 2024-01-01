@@ -3,7 +3,7 @@ export const development = {
   client: 'sqlite3',
   useNullAsDefault: true,
   connection: {
-    filename: './data/auth.db3',
+    filename: process.env.DEV_DB_FILENAME,
   },
   pool: {
     afterCreate: (conn, done) => {
@@ -22,9 +22,9 @@ export const development = {
 export const staging = {
   client: 'postgresql',
   connection: {
-    database: 'my_db',
-    user: 'username',
-    password: 'password',
+    database: process.env.STAGING_DB_NAME,
+    user: process.env.STAGING_DB_USER,
+    password: process.env.STAGING_DB_PASS,
   },
   pool: {
     min: 2,
@@ -40,9 +40,9 @@ export const production = {
   production: {
     client: 'postgresql',
     connection: {
-      database: 'my_db',
-      user: 'username',
-      password: 'password',
+      database: process.env.PRODUCTION_DB_NAME,
+      user: process.env.PRODUCTION_DB_USER,
+      password: process.env.PRODUCTION_DB_PASS,
     },
     pool: {
       min: 2,

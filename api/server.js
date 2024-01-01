@@ -1,3 +1,6 @@
+// Load environment variables from .env file
+import 'dotenv/config';
+
 // Importing necessary modules for the Express server
 import express from 'express';
 import cors from 'cors';
