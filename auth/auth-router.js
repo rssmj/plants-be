@@ -29,29 +29,62 @@ router.post('/register', (req, res) => {
 // Route for user login
 router.post('/login', (req, res) => {
   let { username, password } = req.body;
-  Users.findBy({
-    username,
-  })
+
+  Users.findBy({ username })
     .first()
     .then((user) => {
-      const token = generateToken(user);
-      user && bcrypt.compareSync(password, user.password)
-        ? res.status(200).json({
-            message: 'You are logged in!',
-            token,
-            user,
-          })
-        : res.status(401).json({
-            message: 'Please try logging in, first!',
-          });
+      // Check if user exists and the password is correct
+      if (user && bcrypt.compareSync(password, user.password)) {
+        const token = generateToken(user); // Generate token for the user
+        res.status(200).json({
+          message: 'You are logged in!',
+          token,
+          // It's a good practice to omit sensitive data like password in the response
+          userData: {
+            id: user.id,
+            username: user.username,
+            // ... other user data you want to include
+          },
+        });
+      } else {
+        res.status(401).json({
+          message: 'Invalid credentials',
+        });
+      }
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
       res.status(500).json({
         errorMessage: 'There was an error logging in!',
       });
     });
 });
+
+// router.post('/login', (req, res) => {
+//   let { username, password } = req.body;
+//   Users.findBy({
+//     username,
+//   })
+//     .first()
+//     .then((user) => {
+//       const token = generateToken(user);
+//       user && bcrypt.compareSync(password, user.password)
+//         ? res.status(200).json({
+//             message: 'You are logged in!',
+//             token,
+//             user,
+//           })
+//         : res.status(401).json({
+//             message: 'Please try logging in, first!',
+//           });
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//       res.status(500).json({
+//         errorMessage: 'There was an error logging in!',
+//       });
+//     });
+// });
 
 // Function to generate a JWT token
 function generateToken(user) {
